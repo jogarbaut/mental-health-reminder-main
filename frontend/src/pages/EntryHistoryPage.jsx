@@ -1,9 +1,11 @@
 import React, { useEffect, useContext } from "react"
 import { useNavigate } from "react-router-dom"
-import { Box, Typography, Paper, IconButton, Stack } from "@mui/material"
-import { Edit, Delete } from "@mui/icons-material"
-import { EntryContext } from "../context/EntryContext"
+import { Box, Typography, Stack } from "@mui/material"
 import { getEntry, deleteEntry } from "../services/EntryService"
+import { EntryContext } from "../context/EntryContext"
+import EntryCard from "../components/EntryCard"
+import PageHeader from "../components/PageHeader"
+import CustomButton from "../components/CustomButton"
 
 const EntryHistoryPage = () => {
   const { state, dispatch } = useContext(EntryContext)
@@ -12,7 +14,9 @@ const EntryHistoryPage = () => {
   useEffect(() => {
     const fetchEntries = async () => {
       const data = await getEntry()
-      dispatch({ type: "SET_ENTRY", payload: data })
+      if (data) {
+        dispatch({ type: "SET_ENTRY", payload: data })
+      }
     }
     fetchEntries()
   }, [dispatch])
@@ -38,61 +42,48 @@ const EntryHistoryPage = () => {
         mt: 5,
       }}
     >
-      <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
-        Entry History
-      </Typography>
+      {/* Page Header */}
+      <PageHeader
+        title="Entry History"
+        subtitle="View how you have been doing or edit an entry"
+      />
 
-      {state.entries.length > 0 ? (
-        <Stack spacing={2} sx={{ width: "100%", maxWidth: "600px" }}>
-          {state.entries.map((entry) => (
-            <Paper
-              key={entry._id}
-              elevation={3}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                p: 2,
-                borderRadius: 2,
-                backgroundColor:
-                  {
-                    Happy: "#A3D6A7",
-                    Calm: "#A7C6ED",
-                    Stressed: "#F4E285",
-                    Sad: "#F28B82",
-                  }[entry.mood] || "#E0E0E0",
-              }}
-            >
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" fontWeight="bold">
-                  {entry.mood}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {entry.note || "No additional notes"}
-                </Typography>
-              </Box>
-              <Box>
-                <IconButton
-                  color="primary"
-                  onClick={() => handleEdit(entry._id)}
-                >
-                  <Edit />
-                </IconButton>
-                <IconButton
-                  color="error"
-                  onClick={() => handleDelete(entry._id)}
-                >
-                  <Delete />
-                </IconButton>
-              </Box>
-            </Paper>
-          ))}
+      {state.entries && state.entries.length > 0 ? (
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ width: "100%", maxWidth: "600px" }}
+        >
+          {state.entries.map(
+            (entry) =>
+              entry && (
+                <EntryCard
+                  key={entry._id}
+                  entry={entry}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )
+          )}
         </Stack>
       ) : (
         <Typography variant="body1" color="textSecondary">
           No entries available.
         </Typography>
       )}
+
+      {/* Action Buttons */}
+      <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+        <CustomButton onClick={() => navigate("/")} variant="alternative">
+          Home
+        </CustomButton>
+        <CustomButton
+          onClick={() => navigate("/recommendations")}
+          variant="secondary"
+        >
+          Advice
+        </CustomButton>
+      </Stack>
     </Box>
   )
 }

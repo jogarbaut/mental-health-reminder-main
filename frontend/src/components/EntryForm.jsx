@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react"
 import { Box, Typography, TextField, Button, Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import MoodBox from "../components/MoodBox"
+import CustomButton from "./CustomButton"
 
-// Define the moods with colors and helper text
 const moods = [
   { label: "Happy", color: "#A3D6A7", helperText: "Positive, Joyful, Content" },
   { label: "Calm", color: "#A7C6ED", helperText: "Relaxed, At Peace" },
@@ -101,30 +101,19 @@ const EntryForm = ({ initialData, onSubmit }) => {
       />
 
       {/* Action Buttons */}
-      <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-        {/* Submit Button - Enabled only if mood is selected */}
+      <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+        <CustomButton onClick={() => navigate("/")} variant="alternative">
+          Home
+        </CustomButton>
+        {/* Submit Button */}
         <Button
           type="submit"
           variant="contained"
           color="primary"
-          disabled={!formData.mood} // Disable if no mood is selected
+          fullWidth
+          disabled={!formData.mood}
         >
-          Submit
-        </Button>
-
-        {/* Home Button */}
-        <Button
-          variant="contained"
-          onClick={() => navigate("/")}
-          sx={{
-            backgroundColor: "#D3A3B5",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "#B283A2",
-            },
-          }}
-        >
-          Home
+          Save Entry
         </Button>
       </Stack>
     </Box>

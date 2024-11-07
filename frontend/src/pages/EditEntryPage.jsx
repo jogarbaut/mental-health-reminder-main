@@ -1,49 +1,69 @@
 import React, { useState, useEffect, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import EntryForm from "../components/EntryForm.jsx"
-import { EntryContext } from "../context/EntryContext.jsx"
-import { updateEntry, getEntryById } from "../services/EntryService.js"
+import { Box, Typography, Paper } from "@mui/material"
+import { getEntryById, updateEntry } from "../services/EntryService"
+import { EntryContext } from "../context/EntryContext"
+import EntryForm from "../components/EntryForm"
 
 const EditEntryPage = () => {
   const { id } = useParams()
-  const { dispatch } = useContext(EntryContext)
-  const [initialData, setInitialData] = useState(null)
   const navigate = useNavigate()
+  const { dispatch } = useContext(EntryContext)
+
+  const [entry, setEntry] = useState(null)
 
   useEffect(() => {
     const fetchEntry = async () => {
       try {
         const data = await getEntryById(id)
-        setInitialData(data)
+        if (data) {
+          setEntry(data)
+        } else {
+          alert("Entry not found")
+          navigate("/history")
+        }
       } catch (error) {
-        alert("Failed to load entry data.")
-        navigate("/")
+        console.error("Failed to fetch entry:", error)
       }
     }
+
     fetchEntry()
   }, [id, navigate])
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (updatedData) => {
     try {
-      const updatedEntry = await updateEntry(id, formData)
-      dispatch({ type: "UPDATE_ENTRY", payload: updatedEntry })
-      alert("Entry updated successfully!")
-      navigate("/")
+      const success = await updateEntry(id, updatedData)
+      if (success) {
+        dispatch({ type: "UPDATE_ENTRY", payload: { id, ...updatedData } })
+        alert("Entry updated successfully!")
+        navigate("/history")
+      } else {
+        alert("Failed to update entry.")
+      }
     } catch (error) {
-      alert("Failed to update entry.")
-      navigate("/")
+      console.error("Error updating entry:", error)
+      alert("An error occurred while updating the entry.")
     }
   }
 
+  if (!entry) return null
+
   return (
-    <div className="edit-workout-page">
-      <h1>Edit Entry</h1>
-      {initialData ? (
-        <EntryForm initialData={initialData} onSubmit={handleSubmit} />
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 5,
+      }}
+    >
+      <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+        Edit Entry
+      </Typography>
+      <Paper elevation={3} sx={{ width: "100%", maxWidth: "600px", p: 3 }}>
+        <EntryForm initialData={entry} onSubmit={handleSubmit} />
+      </Paper>
+    </Box>
   )
 }
 

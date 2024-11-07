@@ -1,39 +1,64 @@
 import React from "react"
-import { Box, Typography } from "@mui/material"
+import { Box, Typography, IconButton, Paper } from "@mui/material"
+import { Edit, Delete } from "@mui/icons-material"
+import { format } from "date-fns"
 
-// Color map for each mood
-const moodColors = {
-  Happy: "#A3D6A7", // Green for Happy
-  Calm: "#A7C6ED", // Blue for Calm
-  Stressed: "#F4E285", // Yellow for Stressed
-  Sad: "#F28B82", // Red for Sad
-}
+const EntryCard = ({ entry, onEdit, onDelete }) => {
+  if (!entry) return null
 
-const EntryCard = ({ entry }) => {
-  const { mood, note } = entry
-  const backgroundColor = moodColors[mood] || "#E0E0E0" // Default color if mood doesn't match
+  const moodColors = {
+    Happy: "#A3D6A7",
+    Calm: "#A7C6ED",
+    Stressed: "#F4E285",
+    Sad: "#F28B82",
+  }
+
+  // Format updatedAt date using date-fns
+  const formattedUpdatedAt = entry.updatedAt
+    ? format(new Date(entry.updatedAt), "M-d-yy")
+    : "Unknown date"
 
   return (
-    <Box
+    <Paper
+      elevation={3}
       sx={{
-        width: 200,
-        padding: 2,
-        borderRadius: 2,
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-        backgroundColor: backgroundColor,
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
-        textAlign: "center",
+        justifyContent: "space-between",
+        p: 2,
+        mb: 2,
+        borderRadius: 2,
+        backgroundColor: moodColors[entry.mood] || "#E0E0E0",
       }}
     >
-      <Typography variant="h6" fontWeight="bold">
-        {mood}
-      </Typography>
-      <Typography variant="body2" color="textSecondary" mt={1}>
-        {note || "No additional notes"}
-      </Typography>
-    </Box>
+      {/* Entry Information */}
+      <Box sx={{ flexGrow: 1 }}>
+        {/* Display Updated Date */}
+        <Typography variant="caption" color="textSecondary">
+          Last Updated: {formattedUpdatedAt}
+        </Typography>
+
+        {/* Display Mood */}
+        <Typography variant="h6" fontWeight="bold" sx={{ mt: 1 }}>
+          {entry.mood}
+        </Typography>
+
+        {/* Display Note */}
+        <Typography variant="body2" color="textSecondary">
+          {entry.note || ""}
+        </Typography>
+      </Box>
+
+      {/* Edit and Delete Icons */}
+      <Box>
+        <IconButton color="primary" onClick={() => onEdit(entry._id)}>
+          <Edit />
+        </IconButton>
+        <IconButton color="error" onClick={() => onDelete(entry._id)}>
+          <Delete />
+        </IconButton>
+      </Box>
+    </Paper>
   )
 }
 

@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom"
 import EntryForm from "../components/EntryForm"
 import { createEntry } from "../services/EntryService"
 import { EntryContext } from "../context/EntryContext"
-import { Typography, Divider, Box } from "@mui/material"
+import { Box } from "@mui/material"
+import PageHeader from "../components/PageHeader"
 
 const CreateEntryPage = () => {
   const { dispatch } = useContext(EntryContext)
@@ -30,14 +31,7 @@ const CreateEntryPage = () => {
         mt: 4,
       }}
     >
-      <Typography variant="h3" fontWeight="bold">
-        Log Mood
-      </Typography>
-      <Typography variant="subtitle1" color="textSecondary">
-        how are you feeling right now?
-      </Typography>
-      <Divider sx={{ width: "60%", my: 2 }} />
-
+      <PageHeader title="Log Mood" subtitle="How are you feeling right now?" />
       <EntryForm onSubmit={handleSubmit} />
     </Box>
   )

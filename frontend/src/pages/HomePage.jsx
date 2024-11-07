@@ -1,31 +1,24 @@
 import React, { useEffect, useContext } from "react"
+import { useNavigate } from "react-router-dom"
+import { Box, Stack, Paper, Alert, Typography } from "@mui/material"
 import { getEntry } from "../services/EntryService"
 import { EntryContext } from "../context/EntryContext"
-import { useNavigate } from "react-router-dom"
-import {
-  Box,
-  Typography,
-  Stack,
-  Button,
-  Divider,
-  Paper,
-  Alert,
-} from "@mui/material"
+import PageHeader from "../components/PageHeader"
+import CustomButton from "../components/CustomButton"
 
 const HomePage = () => {
   const { state, dispatch } = useContext(EntryContext)
   const navigate = useNavigate()
 
   useEffect(() => {
-    const fetchEntry = async () => {
+    const fetchEntries = async () => {
       const data = await getEntry()
       dispatch({ type: "SET_ENTRY", payload: data })
     }
-    fetchEntry()
+    fetchEntries()
   }, [dispatch])
 
-  // Get the last 7 entries or as many as are available
-  const lastEntries = state.entries.slice(-7).reverse() // Reverse to show most recent first
+  const lastEntries = state.entries.slice(-7).reverse()
 
   // Check if the user has logged an entry in the last 12 hours, or if there are no entries at all
   const lastEntryTime = state.entries.length
@@ -47,30 +40,16 @@ const HomePage = () => {
         mt: 5,
       }}
     >
-      {/* Main Title and Subtitle */}
-      <Typography variant="h3" fontWeight="bold">
-        Your Mood Matters
-      </Typography>
-      <Typography
-        variant="subtitle1"
-        color="textSecondary"
-        align="center"
-        sx={{ mt: 1, mb: 2, maxWidth: "600px" }}
-      >
-        Why track your mood? Regular mood logging helps you identify patterns
-        and triggers, making it easier to improve your well-being over time.
-      </Typography>
-      <Divider sx={{ width: "60%", my: 2 }} />
+      {/* Page Header */}
+      <PageHeader
+        title="Your Mood Matters"
+        subtitle="Why track your mood? Regular mood logging helps you identify patterns and triggers, making it easier to improve your well-being over time."
+      />
 
-      {/* Log Section Title */}
-      <Typography variant="h5" fontWeight="bold" sx={{ mt: 2 }}>
-        Log
-      </Typography>
-
-      {/* Mood Log Circles with Mood Titles */}
+      {/* Mood Log Circles */}
       <Paper
         elevation={3}
-        onClick={handleNavigateToHistory} // Navigate to history page when the box or circles are clicked
+        onClick={handleNavigateToHistory}
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -134,39 +113,21 @@ const HomePage = () => {
 
       {/* Action Buttons */}
       <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-        <Button
-          variant="contained"
-          onClick={() => navigate("/create")}
-          sx={{
-            backgroundColor: "#D3A3B5",
-            color: "black",
-            "&:hover": { backgroundColor: "#B283A2" },
-          }}
-        >
+        <CustomButton onClick={() => navigate("/create")} variant="primary">
           Log Mood
-        </Button>
-        <Button
-          variant="contained"
+        </CustomButton>
+        <CustomButton
           onClick={() => navigate("/recommendations")}
-          sx={{
-            backgroundColor: "#A3D6A7",
-            color: "black",
-            "&:hover": { backgroundColor: "#8FBF92" },
-          }}
+          variant="secondary"
         >
           Advice
-        </Button>
-        <Button
-          variant="contained"
+        </CustomButton>
+        <CustomButton
           onClick={() => navigate("/history")}
-          sx={{
-            backgroundColor: "#F3D5A7",
-            color: "black",
-            "&:hover": { backgroundColor: "#E2C38D" },
-          }}
+          variant="alternative"
         >
           History
-        </Button>
+        </CustomButton>
       </Stack>
     </Box>
   )
