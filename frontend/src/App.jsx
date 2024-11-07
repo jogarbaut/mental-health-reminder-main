@@ -33,7 +33,7 @@ const App = () => {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              padding: { xs: 2, sm: 3, md: 4 }, // Responsive padding
+              padding: { xs: 2, sm: 3, md: 4 },
               maxWidth: { xs: "100%", sm: "90%", md: "80%", lg: "70%" },
             }}
           >
