@@ -1,11 +1,25 @@
-import React from "react"
-import { Box, Typography, IconButton, Paper } from "@mui/material"
+import React, { useState } from "react"
+import {
+  Box,
+  Typography,
+  IconButton,
+  Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from "@mui/material"
 import { Edit, Delete } from "@mui/icons-material"
 import { format } from "date-fns"
 
 const EntryCard = ({ entry, onEdit, onDelete }) => {
+  const [openDialog, setOpenDialog] = useState(false)
+
   if (!entry) return null
 
+  // Define mood colors
   const moodColors = {
     Happy: "#A3D6A7",
     Calm: "#A7C6ED",
@@ -13,10 +27,22 @@ const EntryCard = ({ entry, onEdit, onDelete }) => {
     Sad: "#F28B82",
   }
 
-  // Format updatedAt date using date-fns
   const formattedUpdatedAt = entry.updatedAt
-    ? format(new Date(entry.updatedAt), "M-d-yy")
+    ? format(new Date(entry.updatedAt), "MM dd, yy")
     : "Unknown date"
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true)
+  }
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+  }
+
+  const handleConfirmDelete = () => {
+    onDelete(entry._id)
+    handleCloseDialog()
+  }
 
   return (
     <Paper
@@ -45,7 +71,7 @@ const EntryCard = ({ entry, onEdit, onDelete }) => {
 
         {/* Display Note */}
         <Typography variant="body2" color="textSecondary">
-          {entry.note || ""}
+          {entry.note || "No additional notes"}
         </Typography>
       </Box>
 
@@ -54,10 +80,29 @@ const EntryCard = ({ entry, onEdit, onDelete }) => {
         <IconButton color="primary" onClick={() => onEdit(entry._id)}>
           <Edit />
         </IconButton>
-        <IconButton color="error" onClick={() => onDelete(entry._id)}>
+        <IconButton color="error" onClick={handleOpenDialog}>
           <Delete />
         </IconButton>
       </Box>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to permanently delete this entry? This action
+            cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   )
 }
