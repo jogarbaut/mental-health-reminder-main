@@ -5,6 +5,7 @@ import { getEntry } from "../services/EntryService"
 import { EntryContext } from "../context/EntryContext"
 import PageHeader from "../components/PageHeader"
 import CustomButton from "../components/CustomButton"
+import AdviceButton from "../components/AdviceButton"
 
 const HomePage = () => {
   const { state, dispatch } = useContext(EntryContext)
@@ -19,6 +20,7 @@ const HomePage = () => {
   }, [dispatch])
 
   const lastEntries = state.entries.slice(-7).reverse()
+  const lastEntry = state.entries[state.entries.length - 1]
 
   // Check if the user has logged an entry in the last 12 hours, or if there are no entries at all
   const lastEntryTime = state.entries.length
@@ -116,12 +118,7 @@ const HomePage = () => {
         <CustomButton onClick={() => navigate("/create")} variant="primary">
           Log Mood
         </CustomButton>
-        <CustomButton
-          onClick={() => navigate("/recommendations")}
-          variant="secondary"
-        >
-          Advice
-        </CustomButton>
+        <AdviceButton lastEntry={lastEntry} />
         <CustomButton
           onClick={() => navigate("/history")}
           variant="alternative"

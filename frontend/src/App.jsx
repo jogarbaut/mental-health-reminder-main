@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage.jsx"
 import EntryHistoryPage from "./pages/EntryHistoryPage.jsx"
 
 const App = () => {
+
   return (
     <EntryProvider>
       <Router>
